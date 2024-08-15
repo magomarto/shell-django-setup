@@ -5,34 +5,47 @@ error_exit() {
     exit 1
 }
 
-echo "updating packages..."
-sudo apt update
+echo "#### updating the system... ####"
+sudo apt update && sudo apt upgrade -y
 
-echo "upgrading packages..."
-sudo apt upgrade -y 
-
-echo "Installing python, pip, and virtualenv..."
+echo "#### Installing python, pip, and virtualenv... ####"
 sudo apt install python3 python3-pip python3-venv || error_exit
 
-echo "Creating the virtual environment..."
+echo "#### Creating the virtual environment... ####"
 python3 -m venv my_env || error_exit
 
-echo "Activating the virtual environment..."
+echo "#### Activating the virtual environment... ####"
 source my_env/bin/activate || error_exit
 
-echo "Installing django..."
+echo "#### Installing django... ####"
 pip install django 
 
-echo "Creating django project..."
-django-admin startproject myproject
+echo "#### Creating requirements.txt... ####"
+pip freeze > requirements.txt
 
+echo "#### Creating django project... ####"
+django-admin startproject myproject
 cd myproject
 
-echo "Making migrations..."
+echo "#### Creating django app ####"
+python3 manage.py startapp my_app
+cd my_app
+mkdir templates
+mkdir static
+cd static
+mkdir js
+mkdir css
+cd ..
+cd ..
+
+echo "#### Making migrations... ####"
 python3 manage.py makemigrations
 
-echo "Migrating..."
+echo "#### Migrating... ####"
 python3 manage.py migrate
 
-echo "Creating superuser..."
+echo "#### Creating superuser... ####"
 python3 manage.py createsuperuser
+
+
+python3 manage.py runserver
